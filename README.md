@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/CSC-IT-Center-for-Science/ansible-role-nfs.svg)](https://travis-ci.org/CSC-IT-Center-for-Science/ansible-role-nfs)
+[![Build Status](https://travis-ci.org/CSCfi/ansible-role-nfs.svg)](https://travis-ci.org/CSCfi/ansible-role-nfs)
 # Ansible Role: NFS
 
 Installs NFS utilities on RedHat/CentOS or Debian/Ubuntu.
