@@ -1,0 +1,41 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Example assertion
+      assert:
+        that: true
+
+- name: Verify that EL7 nfs export can be mounted
+  hosts: nfsclients
+  tasks:
+    - name: Mount an NFS volume from EL7 host
+      shell: 'mount | grep -q /m/nfs_test_el7 || mount -t nfs -o rw,nolock nfs-server-el7:/export/nfs_test /m/nfs_test_el7'
+      args:
+        warn: false
+    - name: Check that exported file can be found
+      command: 'grep -q "successful mount" /m/nfs_test_el7/testfile'
+
+- name: Verify that EL8 nfs export can be mounted
+  hosts: nfsclients
+  tasks:
+    - name: Mount an NFS volume from EL8 host
+      shell: 'mount | grep -q /m/nfs_test_el8 || mount -t nfs -o rw,nolock nfs-server-el8:/export/nfs_test /m/nfs_test_el8'
+      args:
+        warn: false
+    - name: Check that exported file can be found
+      command: 'grep -q "successful mount" /m/nfs_test_el8/testfile'
+
+- name: Verify that the number of threads has been set correctly
+  hosts: nfsservers
+  tasks:
+    - name: Check the number of threads
+      command: 'nfsconf --isset nfsd threads'
+      when: ansible_distribution_major_version == '8'
+    - name: Check the number of threads
+      shell: "sed -n '/[^#]\\[nfsd\\]/,/\\[.*\\]/p' /etc/nfs.conf | awk -F= '/threads/{print $2}'"
+      args:
+        warn: false
+      when: ansible_distribution_major_version == '7'

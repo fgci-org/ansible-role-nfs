@@ -26,16 +26,13 @@
       enabled: "{{ nfs_server_enabled }}"
   when: nfs_exports|length and nfs_service_managed
 
-- name: Set threadcount for nfsd in sysconfig file.
-  lineinfile:
-      state: present
-      insertafter: "^#RPCNFSDCOUNT=16"
-      create: no
-      regexp: '^RPCNFSDCOUNT=".*"'
-      line: 'RPCNFSDCOUNT="{{ nfsd_threads }}"'
-      dest: '/etc/sysconfig/nfs'
-      backup: yes
+- name: Template /etc/nfs.conf.
+  template:
+    src: nfs.conf.j2
+    dest: /etc/nfs.conf
+    owner: root
+    group: root
+    mode: 0644
   when: nfs_exports|length and nfs_service_managed and ansible_os_family == "RedHat"
-  notify: 
-    - restart nfs-config on EL7
+  notify:
     - restart nfs-server

@@ -1,0 +1,35 @@
+---
+- name: Create exports
+  hosts: nfsservers
+  tasks:
+    - name: "Create export directories"
+      file:
+        path: /export/nfs_test
+        state: directory
+    - name: "Create nfs test file"
+      lineinfile:
+        path: /export/nfs_test/testfile
+        line: successful mount
+        create: yes
+
+- name: Create mountpoints
+  hosts: nfsclients
+  tasks:
+    - name: "Create mount directories"
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /m/nfs_test_el7
+        - /m/nfs_test_el8
+    - name: "Install nfs-utils"
+      yum:
+        name: nfs-utils
+        state: installed
+
+- name: Converge
+  hosts: nfsservers
+  tasks:
+    - name: "Include ansible-role-nfs"
+      include_role:
+        name: "ansible-role-nfs"

@@ -1,0 +1,55 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: nfs-server-el7
+    image: docker.io/pycontribs/centos:7
+    pre_build_image: true
+    privileged: true
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /tmp/nfs_export:/export
+    groups:
+      - nfsservers
+    networks:
+      - name: nfs-network
+  - name: nfs-server-el8
+    image: docker.io/pycontribs/centos:8
+    pre_build_image: true
+    privileged: true
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /tmp/nfs_export:/export
+    groups:
+      - nfsservers
+    networks:
+      - name: nfs-network
+  - name: nfs-client
+    image: docker.io/pycontribs/centos:7
+    pre_build_image: true
+    privileged: true
+    groups:
+      - nfsclients
+    networks:
+      - name: nfs-network
+provisioner:
+  name: ansible
+  log: true
+  inventory:
+    group_vars:
+      nfsservers:
+        nfs_exports:
+          - "/export/nfs_test nfs-client(rw,sync,no_root_squash)"
+      nfsclients: []
+verifier:
+  name: ansible
