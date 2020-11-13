@@ -26,6 +26,18 @@
       enabled: "{{ nfs_server_enabled }}"
   when: nfs_exports|length and nfs_service_managed
 
+- name: Template empty /etc/sysconfig/nfs in EL7 to prevent duplicate configuration.
+  template:
+    src: sysconfig-nfs.j2
+    dest: /etc/sysconfig/nfs
+    owner: root
+    group: root
+    mode: 0644
+  when: nfs_exports|length and nfs_service_managed and ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+  notify:
+    - restart nfs-config on EL7
+    - restart nfs-server
+
 - name: Template /etc/nfs.conf.
   template:
     src: nfs.conf.j2
