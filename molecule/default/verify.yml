@@ -39,3 +39,15 @@
       args:
         warn: false
       when: ansible_distribution_major_version == '7'
+
+- name: Verify that the mountd options are set correctly
+  hosts: nfsservers
+  tasks:
+    - name: Check the manage-gids-option
+      command: 'nfsconf --isset mountd manage-gids'
+      when: ansible_distribution_major_version == '8'
+    - name: Check the manage-gids-option
+      shell: "sed -n '/[^#]\\[mountd\\]/,/\\[.*\\]/p' /etc/nfs.conf | awk -F= '/manage-gids/{print $2}'"
+      args:
+        warn: false
+      when: ansible_distribution_major_version == '7'

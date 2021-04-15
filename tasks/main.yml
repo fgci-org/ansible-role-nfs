@@ -20,7 +20,7 @@
   notify: restart nfs-server
 
 - name: Ensure nfs is running.
-  service: 
+  service:
       name: "{{ nfs_server_daemon }}"
       state: "{{ nfs_server_state }}"
       enabled: "{{ nfs_server_enabled }}"
