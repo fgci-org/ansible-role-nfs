@@ -50,8 +50,6 @@ provisioner:
       nfsservers:
         nfs_exports:
           - "/export/nfs_test nfs-client(rw,sync,no_root_squash)"
-        nfs_conf_mountd:
-          manage-gids: "yes"
       nfsclients: []
 verifier:
   name: ansible
