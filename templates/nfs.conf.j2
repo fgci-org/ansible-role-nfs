@@ -1,3 +1,10 @@
 # {{ ansible_managed }}
 [nfsd]
   threads={{ nfsd_threads }}
+
+{% if nfs_conf_mountd|length > 0 %}
+[mountd]
+{% for key, value in nfs_conf_mountd.items() %}
+  {{ key }}={{ value }}
+{% endfor %}
+{% endif %}

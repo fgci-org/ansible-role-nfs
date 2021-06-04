@@ -5,3 +5,6 @@ nfs_server_enabled: "yes"
 # If nfs_service_managed is False then we don't restart/start nfs
 nfs_service_managed: True
 nfsd_threads: 32
+nfs_conf_mountd: {
+  "manage-gids":"yes"
+}
